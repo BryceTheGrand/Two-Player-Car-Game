@@ -9,10 +9,11 @@ Car carTwo;
 
 void setup() {
 
+  textSize(40);
   size(900, 900);
   carOne = new Car(10, 10, 0);
   carTwo = new Car(width - 40, height - 40, -PI);
-  
+
   frameRate(60);
 
   for (int i = 0; i < 50; i++) {
@@ -115,24 +116,24 @@ void checkCollisions() {
   // Check car-wall collisions
   for (int i = 0; i < wallsList.size(); i++) {
     if (carOne.pos.x - wallsList.get(i).pos.x - 30 < 0 && carOne.pos.y - wallsList.get(i).pos.y - 30 < 0 && carOne.pos.y + 30 - wallsList.get(i).pos.y > 0 && carOne.pos.x - wallsList.get(i).pos.x - 30 > -10)
-    carOne.pos.x = wallsList.get(i).pos.x + 30;
+      carOne.pos.x = wallsList.get(i).pos.x + 30;
     if (-(carOne.pos.x + 30) + wallsList.get(i).pos.x < 0 && carOne.pos.y - wallsList.get(i).pos.y - 30 < 0 && carOne.pos.y + 30 - wallsList.get(i).pos.y > 0 && -(carOne.pos.x + 30) + wallsList.get(i).pos.x > -10)
-    carOne.pos.x = wallsList.get(i).pos.x - 30;
-    
+      carOne.pos.x = wallsList.get(i).pos.x - 30;
+
     if (carOne.pos.y - wallsList.get(i).pos.y - 30 < 0 && carOne.pos.x - wallsList.get(i).pos.x - 30 < 0 && carOne.pos.x + 30 - wallsList.get(i).pos.x > 0 && carOne.pos.y - wallsList.get(i).pos.y - 30 > -10)
-    carOne.pos.y = wallsList.get(i).pos.y + 30;
+      carOne.pos.y = wallsList.get(i).pos.y + 30;
     if (-(carOne.pos.y + 30) + wallsList.get(i).pos.y < 0 && carOne.pos.x - wallsList.get(i).pos.x - 30 < 0 && carOne.pos.x + 30 - wallsList.get(i).pos.x > 0 && -(carOne.pos.y + 30) + wallsList.get(i).pos.y > -10)
-    carOne.pos.y = wallsList.get(i).pos.y - 30;
-    
+      carOne.pos.y = wallsList.get(i).pos.y - 30;
+
     if (carTwo.pos.x - wallsList.get(i).pos.x - 30 < 0 && carTwo.pos.y - wallsList.get(i).pos.y - 30 < 0 && carTwo.pos.y + 30 - wallsList.get(i).pos.y > 0 && carTwo.pos.x - wallsList.get(i).pos.x - 30 > -10)
-    carTwo.pos.x = wallsList.get(i).pos.x + 30;
+      carTwo.pos.x = wallsList.get(i).pos.x + 30;
     if (-(carTwo.pos.x + 30) + wallsList.get(i).pos.x < 0 && carTwo.pos.y - wallsList.get(i).pos.y - 30 < 0 && carTwo.pos.y + 30 - wallsList.get(i).pos.y > 0 && -(carTwo.pos.x + 30) + wallsList.get(i).pos.x > -10)
-    carTwo.pos.x = wallsList.get(i).pos.x - 30;
-    
+      carTwo.pos.x = wallsList.get(i).pos.x - 30;
+
     if (carTwo.pos.y - wallsList.get(i).pos.y - 30 < 0 && carTwo.pos.x - wallsList.get(i).pos.x - 30 < 0 && carTwo.pos.x + 30 - wallsList.get(i).pos.x > 0 && carTwo.pos.y - wallsList.get(i).pos.y - 30 > -10)
-    carTwo.pos.y = wallsList.get(i).pos.y + 30;
+      carTwo.pos.y = wallsList.get(i).pos.y + 30;
     if (-(carTwo.pos.y + 30) + wallsList.get(i).pos.y < 0 && carTwo.pos.x - wallsList.get(i).pos.x - 30 < 0 && carTwo.pos.x + 30 - wallsList.get(i).pos.x > 0 && -(carTwo.pos.y + 30) + wallsList.get(i).pos.y > -10)
-    carTwo.pos.y = wallsList.get(i).pos.y - 30;
+      carTwo.pos.y = wallsList.get(i).pos.y - 30;
   }
 }
 
@@ -166,11 +167,10 @@ void draw() {
   carTwo.drawBarrel();
   carOneUpdatePos();
   carTwoUpdatePos();
-  
+
   if (frameCount % 120 == 0) {
-    
+
     wallsList.add(new Wall(30 * int(random(2, 28)), 30 * int(random(2, 28))));
-    
   }
 
   for (int i = 0; i < wallsList.size(); i++) {
@@ -197,10 +197,12 @@ void draw() {
   }
 
   if (carOne.health < 1) {
-    text("Player Two Wins", width/2 - 40, height/2);
+    textAlign(CENTER, BOTTOM);
+    text("Player Two Wins",width/2 ,height/2);
     noLoop();
   } else if (carTwo.health < 1) {
-    text("Player One Wins", width/2 - 40, height/2);
+    textAlign(CENTER, BOTTOM);
+    text("Player One Wins", width/2, height/2);
     noLoop();
   }
 }
