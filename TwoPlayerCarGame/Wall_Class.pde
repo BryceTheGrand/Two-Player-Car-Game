@@ -14,5 +14,4 @@ class Wall {
     noStroke();
     image(wall, pos.x, pos.y, 30, 30);
   }
-
 }

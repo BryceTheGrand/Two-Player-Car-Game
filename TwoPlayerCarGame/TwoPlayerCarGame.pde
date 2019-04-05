@@ -1,20 +1,24 @@
 import processing.sound.*;
 
 
-int movementSpeed = 2;
 ArrayList<String> keyList = new ArrayList<String>();
 ArrayList<Bullet> bullets = new ArrayList<Bullet>();
 ArrayList<Wall> wallsList = new ArrayList<Wall>();
+ArrayList<Powerup> activePowerups = new ArrayList<Powerup>();
 
 
 SoundFile bulletImpact, bulletImpactTwo, death, gunshot;
-PImage wall, tank;
+PImage wall, tank, speed, ricochet;
 
 Car carOne;
 Car carTwo;
 
 
 void setup() {
+
+
+  activePowerups.add(new Powerup());
+
 
   textSize(40);
   size(900, 900);
@@ -25,6 +29,8 @@ void setup() {
 
   wall = loadImage("wall.png");
   tank = loadImage("tank.png");
+  speed = loadImage("speed.png");
+  ricochet = loadImage("ricochet.png");
 
   gunshot.amp(0.3);
   bulletImpact.amp(0.5);
@@ -48,13 +54,13 @@ void setup() {
 void carOneUpdatePos() {
 
   if (keyList.get(0) == "true") {
-    carOne.pos.x -= movementSpeed;
+    carOne.pos.x -= carOne.movementSpeed;
   } else if (keyList.get(2) == "true") {
-    carOne.pos.x += movementSpeed;
+    carOne.pos.x += carOne.movementSpeed;
   } else if (keyList.get(1) == "true") {
-    carOne.pos.y += movementSpeed;
+    carOne.pos.y += carOne.movementSpeed;
   } else if (keyList.get(3) == "true") {
-    carOne.pos.y -= movementSpeed;
+    carOne.pos.y -= carOne.movementSpeed;
   } 
 
   if (keyList.get(8) == "true") 
@@ -67,13 +73,13 @@ void carOneUpdatePos() {
 void carTwoUpdatePos() {
 
   if (keyList.get(4) == "true") {
-    carTwo.pos.x -= movementSpeed;
+    carTwo.pos.x -= carTwo.movementSpeed;
   } else if (keyList.get(5) == "true") {
-    carTwo.pos.y += movementSpeed;
+    carTwo.pos.y += carTwo.movementSpeed;
   } else if (keyList.get(6) == "true") {
-    carTwo.pos.x += movementSpeed;
+    carTwo.pos.x += carTwo.movementSpeed;
   } else if (keyList.get(7) == "true") {
-    carTwo.pos.y -= movementSpeed;
+    carTwo.pos.y -= carTwo.movementSpeed;
   }
 
   if (keyList.get(10) == "true") 
@@ -100,8 +106,8 @@ void checkCollisions() {
       }
       for (int j = 0; j < wallsList.size(); j++) {
 
-        if ((wallsList.get(j).pos.x - bullets.get(i).pos.x > -30) && (wallsList.get(j).pos.x - bullets.get(i).pos.x < 30)) {
-          if (wallsList.get(j).pos.y - bullets.get(i).pos.y > -30 && wallsList.get(j).pos.y - bullets.get(i).pos.y < 30) {
+        if ((wallsList.get(j).pos.x - bullets.get(i).pos.x > -15) && (wallsList.get(j).pos.x - bullets.get(i).pos.x < 15)) {
+          if (wallsList.get(j).pos.y - bullets.get(i).pos.y > -15 && wallsList.get(j).pos.y - bullets.get(i).pos.y < 15) {
             wallsList.get(j).health -= 1;
             bullets.get(i).dead = true;
 
@@ -161,6 +167,7 @@ void checkCollisions() {
 void drawHealth() {
 
   stroke(255);
+  strokeWeight(6);
 
   for (int i = 1; i <= carOne.health; i++) {
 
@@ -178,6 +185,7 @@ void draw() {
 
   background(0);
   fill(200);
+  noStroke();
   rect(0, 0, width, width);
   fill(0);
   rect(10, 10, width - 20, width - 20);
@@ -193,11 +201,30 @@ void draw() {
     wallsList.add(new Wall(30 * int(random(2, 28)), 30 * int(random(2, 28))));
   }
 
+  if (frameCount % 1350 == 0) {
+
+    activePowerups.add(new Powerup());
+  }
+
   for (int i = 0; i < wallsList.size(); i++) {
 
     wallsList.get(i).drawWall();
     if (wallsList.get(i).dead)
       wallsList.remove(i);
+  }
+
+  for (int i = 0; i < activePowerups.size(); i++) {
+
+    activePowerups.get(i).drawPowerup();
+    if (!activePowerups.get(i).checkCollide(carOne.pos.x, carOne.pos.y)) {
+      carOne.buff[activePowerups.get(i).buffType] = true;
+    }
+    if (!activePowerups.get(i).checkCollide(carTwo.pos.x, carTwo.pos.y)) {
+      carTwo.buff[activePowerups.get(i).buffType] = true;
+    }
+    if (!activePowerups.get(i).active) {
+      activePowerups.remove(i);
+    }
   }
 
   checkCollisions();
@@ -312,7 +339,10 @@ void keyPressed() {
 
   // Car One fire
   if (key == 'h') {
-    bullets.add(new Bullet(carOne.pos.x, carOne.pos.y, carOne.angle));
+    if (carOne.buff[1])
+      bullets.add(new Bullet(carOne.pos.x, carOne.pos.y, carOne.angle, true));
+    else
+      bullets.add(new Bullet(carOne.pos.x, carOne.pos.y, carOne.angle, false));
     if (!gunshot.isPlaying()) 
       gunshot.play();
     else {
@@ -323,7 +353,10 @@ void keyPressed() {
 
   // Car Two fire
   if (keyCode == ENTER) {
-    bullets.add(new Bullet(carTwo.pos.x, carTwo.pos.y, carTwo.angle));
+    if (carTwo.buff[1])
+      bullets.add(new Bullet(carTwo.pos.x, carTwo.pos.y, carTwo.angle, true));
+    else
+      bullets.add(new Bullet(carTwo.pos.x, carTwo.pos.y, carTwo.angle, false));
     if (!gunshot.isPlaying()) 
       gunshot.play();
   }
