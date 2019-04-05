@@ -1,7 +1,14 @@
+import processing.sound.*;
+
+
 int movementSpeed = 3;
 ArrayList<String> keyList = new ArrayList<String>();
 ArrayList<Bullet> bullets = new ArrayList<Bullet>();
 ArrayList<Wall> wallsList = new ArrayList<Wall>();
+
+
+SoundFile bulletImpact, bulletImpactTwo, death, gunshot;
+PImage wall, tank;
 
 Car carOne;
 Car carTwo;
@@ -11,6 +18,17 @@ void setup() {
 
   textSize(40);
   size(900, 900);
+  bulletImpact = new SoundFile(this, "bulletimpact.wav");
+  bulletImpactTwo = new SoundFile(this, "bulletimpact2.wav");
+  death = new SoundFile(this, "death.wav");
+  gunshot = new SoundFile(this, "gunshot.wav");
+  
+  wall = loadImage("wall.png");
+  tank = loadImage("tank.png");
+
+  gunshot.amp(0.3);
+  bulletImpact.amp(0.5);
+  bulletImpactTwo.amp(1);
   carOne = new Car(10, 10, 0);
   carTwo = new Car(width - 40, height - 40, -PI);
 
@@ -29,14 +47,15 @@ void setup() {
 
 void carOneUpdatePos() {
 
-  if (keyList.get(0) == "true")
+  if (keyList.get(0) == "true") {
     carOne.pos.x -= movementSpeed;
-  else if (keyList.get(2) == "true")
+  } else if (keyList.get(2) == "true") {
     carOne.pos.x += movementSpeed;
-  else if (keyList.get(1) == "true")
+  } else if (keyList.get(1) == "true") {
     carOne.pos.y += movementSpeed;
-  else if (keyList.get(3) == "true")
+  } else if (keyList.get(3) == "true") {
     carOne.pos.y -= movementSpeed;
+  } 
 
   if (keyList.get(8) == "true") 
     carOne.angle -= 0.05;
@@ -47,14 +66,15 @@ void carOneUpdatePos() {
 
 void carTwoUpdatePos() {
 
-  if (keyList.get(4) == "true")
+  if (keyList.get(4) == "true") {
     carTwo.pos.x -= movementSpeed;
-  else if (keyList.get(5) == "true")
+  } else if (keyList.get(5) == "true") {
     carTwo.pos.y += movementSpeed;
-  else if (keyList.get(6) == "true")
+  } else if (keyList.get(6) == "true") {
     carTwo.pos.x += movementSpeed;
-  else if (keyList.get(7) == "true")
+  } else if (keyList.get(7) == "true") {
     carTwo.pos.y -= movementSpeed;
+  }
 
   if (keyList.get(10) == "true") 
     carTwo.angle -= 0.05;
@@ -191,6 +211,11 @@ void draw() {
       fill(255, 30, 0, 200);
       circle(bullets.get(i).pos.x + 15, bullets.get(i).pos.y + 15, 30);
       bullets.remove(i);
+      int randomNum = round(random(0, 1));
+      if (randomNum == 0)
+        bulletImpact.play();
+      else if (randomNum == 1)
+        bulletImpactTwo.play();
       fill(255);
       stroke(255);
     }
@@ -198,11 +223,13 @@ void draw() {
 
   if (carOne.health < 1) {
     textAlign(CENTER, BOTTOM);
-    text("Player Two Wins",width/2 ,height/2);
+    text("Player Two Wins", width/2, height/2);
+    death.play();
     noLoop();
   } else if (carTwo.health < 1) {
     textAlign(CENTER, BOTTOM);
     text("Player One Wins", width/2, height/2);
+    death.play();
     noLoop();
   }
 }
@@ -275,10 +302,20 @@ void keyPressed() {
     keyList.set(11, "true");
 
   // Car One fire
-  if (key == 'h')
+  if (key == 'h') {
     bullets.add(new Bullet(carOne.pos.x, carOne.pos.y, carOne.angle));
+    if (!gunshot.isPlaying()) 
+      gunshot.play();
+    else {
+      gunshot.stop();
+      gunshot.play();
+    }
+  }
 
   // Car Two fire
-  if (keyCode == ENTER)
+  if (keyCode == ENTER) {
     bullets.add(new Bullet(carTwo.pos.x, carTwo.pos.y, carTwo.angle));
+    if (!gunshot.isPlaying()) 
+      gunshot.play();
+  }
 }

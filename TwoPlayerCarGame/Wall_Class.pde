@@ -12,7 +12,7 @@ class Wall {
 
   void drawWall() {
     noStroke();
-    rect(pos.x, pos.y, 30, 30);
+    image(wall, pos.x, pos.y, 30, 30);
   }
 
 }
