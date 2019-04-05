@@ -1,7 +1,7 @@
 import processing.sound.*;
 
 
-int movementSpeed = 3;
+int movementSpeed = 2;
 ArrayList<String> keyList = new ArrayList<String>();
 ArrayList<Bullet> bullets = new ArrayList<Bullet>();
 ArrayList<Wall> wallsList = new ArrayList<Wall>();
@@ -22,7 +22,7 @@ void setup() {
   bulletImpactTwo = new SoundFile(this, "bulletimpact2.wav");
   death = new SoundFile(this, "death.wav");
   gunshot = new SoundFile(this, "gunshot.wav");
-  
+
   wall = loadImage("wall.png");
   tank = loadImage("tank.png");
 
@@ -213,9 +213,18 @@ void draw() {
       bullets.remove(i);
       int randomNum = round(random(0, 1));
       if (randomNum == 0)
-        bulletImpact.play();
-      else if (randomNum == 1)
-        bulletImpactTwo.play();
+        if (!bulletImpact.isPlaying())
+          bulletImpact.play();
+        else {
+          bulletImpact.stop();
+          bulletImpact.play();
+        } else if (randomNum == 1)
+        if (!bulletImpactTwo.isPlaying())
+          bulletImpactTwo.play();
+        else {
+          bulletImpactTwo.stop();
+          bulletImpactTwo.play();
+        }
       fill(255);
       stroke(255);
     }
